@@ -72,18 +72,18 @@ class Corpus(common.FileLoaderMixin):
 
         if not gutenberg_available:
 
-            print("The Project Gutenberg corpus is currently not available on your system.",
-                  "It consists of more than 4000 novels and 1.8 GB of data.")
-            download_prompt = input(
-                  "If you want to download the corpus, please enter (y). Any other input will "
-                  "terminate the program: ")
-            if not download_prompt in ['y', '(y)']:
-                raise ValueError("Project Gutenberg corpus will not be downloaded.")
+            # print("The Project Gutenberg corpus is currently not available on your system.",
+            #       "It consists of more than 4000 novels and 1.8 GB of data.")
+            # download_prompt = input(
+            #       "If you want to download the corpus, please enter (y). Any other input will "
+            #       "terminate the program: ")
+            # if not download_prompt in ['y', '(y)']:
+            #     raise ValueError("Project Gutenberg corpus will not be downloaded.")
 
             import zipfile
             import urllib
-            url = 'https://s3-us-west-2.amazonaws.com/gutenberg-cache/gutenberg_corpus.zip'
-            urllib.request.urlretrieve(url, 'gutenberg_corpus.zip')
+            # url = 'https://s3-us-west-2.amazonaws.com/gutenberg-cache/gutenberg_corpus.zip'
+            # urllib.request.urlretrieve(url, 'gutenberg_corpus.zip')
             zipf = zipfile.ZipFile('gutenberg_corpus.zip')
             if not os.path.isdir(gutenberg_path):
                 os.mkdir(gutenberg_path)
