@@ -8,12 +8,13 @@ from gender_novels.corpus import Corpus
 from collections import defaultdict
 import itertools
 from scipy.sparse import csr_matrix
+from tqdm import tqdm
 
 
 def get_corpus():
     print("Loading corpus")
     corpuses_dict = {}
-    corpus = Corpus('sample_novels')
+    corpus = Corpus('gutenberg')
     female_corpus = corpus.filter_by_gender('female')
     male_corpus = corpus.filter_by_gender('male')
     corpuses_dict["female"] = female_corpus
@@ -87,7 +88,8 @@ def get_cooccurrence_matrix(corpus, target_words):
     sentence_words_list = []
     pattern = re.compile(r"\w+(?:-\w+)+")
 
-    for novel in corpus.novels:
+    print("Tokenizing novels")
+    for novel in tqdm(corpus.novels):
         sentences = sent_tokenize(novel.text.lower().replace("\n", " "))
         #  print(sentences[:10])
         for sentence in sentences:
@@ -98,6 +100,7 @@ def get_cooccurrence_matrix(corpus, target_words):
     
     # num_unique = len(target_words)
     # cooc_mat = np.zeros((num_unique, num_unique),np.float64)
+    print("Creating co-occurrence matrix")
     cooc_mat, word_to_id = create_co_occurences_matrix(target_words, sentence_words_list)
     # print(word_to_id)
     return cooc_mat, word_to_id
@@ -120,7 +123,7 @@ if __name__ == "__main__":
     corpuses = get_corpus()
     for name, corpus in corpuses.items():
         print("Processing ", name)
-        
+
         cooccur_words = get_top_words(corpus, top_n_words=10000)
         print("Obtained top words")
 
