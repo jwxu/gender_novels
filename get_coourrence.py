@@ -9,12 +9,47 @@ from collections import defaultdict
 import itertools
 from scipy.sparse import csr_matrix
 
+
 def get_corpus():
     print("Loading corpus")
-    corpus = Corpus('sample_novels')
+    corpuses_dict = {}
+    corpus = Corpus('gutenberg')
     female_corpus = corpus.filter_by_gender('female')
     male_corpus = corpus.filter_by_gender('male')
-    return female_corpus, male_corpus
+    corpuses_dict["female"] = female_corpus
+    corpuses_dict["male"] = male_corpus
+
+    all_1750_1800 = corpus.filter_by_year(start_year=1700, end_year=1800)
+    all_1800_1850 = corpus.filter_by_year(start_year=1800, end_year=1850)
+    all_1850_1900 = corpus.filter_by_year(start_year=1850, end_year=1900)
+    all_1900_1950 = corpus.filter_by_year(start_year=1900, end_year=1950)
+    corpuses_dict["all_1750_1800"] = all_1750_1800
+    corpuses_dict["all_1800_1850"] = all_1800_1850
+    corpuses_dict["all_1850_1900"] = all_1850_1900
+    corpuses_dict["all_1900_1950"] = all_1900_1950
+
+    female_1750_1800 = female_corpus.filter_by_year(start_year=1700, end_year=1800)
+    female_1800_1850 = female_corpus.filter_by_year(start_year=1800, end_year=1850)
+    female_1850_1900 = female_corpus.filter_by_year(start_year=1850, end_year=1900)
+    female_1900_1950 = female_corpus.filter_by_year(start_year=1900, end_year=1950)
+    corpuses_dict["female_1750_1800"] = female_1750_1800
+    corpuses_dict["female_1800_1850"] = female_1800_1850
+    corpuses_dict["female_1850_1900"] = female_1850_1900
+    corpuses_dict["female_1900_1950"] = female_1900_1950
+
+    male_1750_1800 = male_corpus.filter_by_year(start_year=1700, end_year=1800)
+    male_1800_1850 = male_corpus.filter_by_year(start_year=1800, end_year=1850)
+    male_1850_1900 = male_corpus.filter_by_year(start_year=1850, end_year=1900)
+    male_1900_1950 = male_corpus.filter_by_year(start_year=1900, end_year=1950)
+    corpuses_dict["male_1750_1800"] = male_1750_1800
+    corpuses_dict["male_1800_1850"] = male_1800_1850
+    corpuses_dict["male_1850_1900"] = male_1850_1900
+    corpuses_dict["male_1900_1950"] = male_1900_1950
+
+    print("Finished loading corpuses")
+
+    return corpuses_dict
+
 
 def get_top_words(corpus, top_n_words=10000):
     all_novel_text = []
@@ -70,8 +105,8 @@ def get_cooccurence_matrix(corpus, target_words):
 def save_as_file(cooc_mat, allowed_words, filename):
     # print(type(cooc_mat.todense()))
     cooc_mat = cooc_mat.todense()
-    print(cooc_mat.shape)
-    print(cooc_mat)
+    # print(cooc_mat.shape)
+    # print(cooc_mat)
     cooc_file = filename + "_cooc_matrix.csv"
     pd.DataFrame(cooc_mat).to_csv(cooc_file)
     # np.savetxt(cooc_file, cooc_mat, delimiter=",")
@@ -82,10 +117,9 @@ def save_as_file(cooc_mat, allowed_words, filename):
 
 
 if __name__ == "__main__":
-    female_corpus, male_corpus = get_corpus()
-    female_cooccur_words = get_top_words(female_corpus, top_n_words=10000)
-    male_cooccur_words = get_top_words(male_corpus, top_n_words=10000)
-    # female
-
-    cooc_mat, word_to_id = get_cooccurence_matrix(female_corpus, female_cooccur_words)
-    save_as_file(cooc_mat, female_cooccur_words, "sample_female")
+    corpuses = get_corpus()
+    for name, corpus in corpuses.items():
+        cooccur_words = get_top_words(corpus, top_n_words=10)
+        cooc_mat, word_to_id = get_cooccurence_matrix(corpus, cooccur_words)
+        save_as_file(cooc_mat, cooccur_words, name)
+        break

@@ -309,6 +309,30 @@ class Corpus(common.FileLoaderMixin):
                 corpus_copy.novels.append(this_novel)
 
         return corpus_copy
+    
+    def filter_by_year(self, start_year, end_year):
+        """
+        Return a new Corpus object that contains only authors whose gender
+        matches gender_filter.
+
+        Accepted inputs are '1700', '1750', '1800', etc.
+
+        :param start_year: start year (inclusive)
+        :param end_year: end year (exclusive)
+        :return: Corpus
+        """
+        corpus_copy = self.clone()
+        corpus_copy.novels = []
+
+        for this_novel in self.novels:
+            # check if all novels have an author_gender attribute
+            if not hasattr(this_novel, 'date'):
+                err = f'Error with year'
+                raise AttributeError(err)
+            if this_novel.date >= start_year and this_novel.date < end_year:
+                corpus_copy.novels.append(this_novel)
+
+        return corpus_copy
 
     def get_wordcount_counter(self):
         """
