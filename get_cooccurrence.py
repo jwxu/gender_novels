@@ -13,7 +13,7 @@ from scipy.sparse import csr_matrix
 def get_corpus():
     print("Loading corpus")
     corpuses_dict = {}
-    corpus = Corpus('gutenberg')
+    corpus = Corpus('sample_novels')
     female_corpus = corpus.filter_by_gender('female')
     male_corpus = corpus.filter_by_gender('male')
     corpuses_dict["female"] = female_corpus
@@ -80,7 +80,7 @@ def create_co_occurences_matrix(allowed_words, documents):
     return words_cooc_matrix, word_to_id
 
 
-def get_cooccurence_matrix(corpus, target_words):
+def get_cooccurrence_matrix(corpus, target_words):
     # Get novel text (as list of words) and file title
     all_novel_text = []
     all_novel_name = []
@@ -119,7 +119,12 @@ def save_as_file(cooc_mat, allowed_words, filename):
 if __name__ == "__main__":
     corpuses = get_corpus()
     for name, corpus in corpuses.items():
-        cooccur_words = get_top_words(corpus, top_n_words=10)
-        cooc_mat, word_to_id = get_cooccurence_matrix(corpus, cooccur_words)
+        print("Processing ", name)
+        
+        cooccur_words = get_top_words(corpus, top_n_words=10000)
+        print("Obtained top words")
+
+        cooc_mat, word_to_id = get_cooccurrence_matrix(corpus, cooccur_words)
+
+        print("Saving file")
         save_as_file(cooc_mat, cooccur_words, name)
-        break
